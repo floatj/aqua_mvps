@@ -1,4 +1,4 @@
-export type TransactionType = 'income' | 'expense';
+export type TransactionType = 'income' | 'expense' | 'asset' | 'liability';
 
 export interface TransactionDto {
 	id: string;

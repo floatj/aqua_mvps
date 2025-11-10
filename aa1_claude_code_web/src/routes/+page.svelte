@@ -120,12 +120,16 @@
 			(acc, entry) => {
 				if (entry.type === 'income') {
 					acc.income += entry.amount;
-				} else {
+				} else if (entry.type === 'expense') {
 					acc.expense += entry.amount;
+				} else if (entry.type === 'asset') {
+					acc.asset += entry.amount;
+				} else if (entry.type === 'liability') {
+					acc.liability += entry.amount;
 				}
 				return acc;
 			},
-			{ income: 0, expense: 0 }
+			{ income: 0, expense: 0, asset: 0, liability: 0 }
 		)
 	);
 
@@ -280,6 +284,76 @@
 		URL.revokeObjectURL(url);
 		setStatus('Export generated.');
 	};
+
+	const exportJson = () => {
+		const rows = get(transactions);
+		if (!rows.length) {
+			setStatus('No data to export.');
+			return;
+		}
+
+		const json = JSON.stringify(rows, null, 2);
+		const blob = new Blob([json], { type: 'application/json;charset=utf-8;' });
+		const url = URL.createObjectURL(blob);
+		const anchor = document.createElement('a');
+		anchor.href = url;
+		anchor.download = `ledgerlite-${today()}.json`;
+		anchor.click();
+		URL.revokeObjectURL(url);
+		setStatus('JSON export generated.');
+	};
+
+	const importJson = () => {
+		const input = document.createElement('input');
+		input.type = 'file';
+		input.accept = 'application/json';
+		input.onchange = async (event) => {
+			const file = (event.target as HTMLInputElement).files?.[0];
+			if (!file) return;
+
+			try {
+				const text = await file.text();
+				const data = JSON.parse(text);
+
+				if (!Array.isArray(data)) {
+					setStatus('Invalid JSON format. Expected an array of transactions.');
+					return;
+				}
+
+				// Validate each transaction has required fields
+				const validTransactions = data.filter((t) => {
+					return (
+						t.id &&
+						t.postedOn &&
+						t.description &&
+						typeof t.amount === 'number' &&
+						['income', 'expense', 'asset', 'liability'].includes(t.type)
+					);
+				});
+
+				if (validTransactions.length === 0) {
+					setStatus('No valid transactions found in file.');
+					return;
+				}
+
+				// Mark all imported transactions as unsynced
+				const importedTransactions = validTransactions.map((t) => ({
+					...t,
+					synced: false,
+					category: t.category || 'General'
+				}));
+
+				await storeTransactions(importedTransactions);
+				const local = await allTransactions();
+				transactions.set(sortTransactions(local));
+				setStatus(`Imported ${validTransactions.length} transactions.`);
+			} catch (error) {
+				console.error('Import error:', error);
+				setStatus('Failed to import JSON. Please check the file format.');
+			}
+		};
+		input.click();
+	};
 </script>
 
 <svelte:head>
@@ -301,7 +375,13 @@
 			{/if}
 		</header>
 
-		<Summary income={$totals.income} expense={$totals.expense} {formatCurrency} />
+		<Summary
+			income={$totals.income}
+			expense={$totals.expense}
+			asset={$totals.asset}
+			liability={$totals.liability}
+			{formatCurrency}
+		/>
 
 		<section class="grid gap-6 lg:grid-cols-[360px,1fr]">
 			<TransactionForm
@@ -316,6 +396,8 @@
 					syncing={$syncing}
 					onSync={syncWithServer}
 					onExport={exportCsv}
+					onExportJson={exportJson}
+					onImportJson={importJson}
 					onSearchInput={(value) => textFilter.set(value)}
 					onTypeFilterChange={(value) => typeFilter.set(value)}
 				/>

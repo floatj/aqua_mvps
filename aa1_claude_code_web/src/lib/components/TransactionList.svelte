@@ -33,18 +33,18 @@
 				</thead>
 				<tbody class="divide-y divide-slate-100">
 					{#each transactions as entry}
+						{@const typeColor = entry.type === 'income' ? 'text-emerald-600' : entry.type === 'expense' ? 'text-rose-600' : entry.type === 'asset' ? 'text-blue-600' : 'text-purple-600'}
+						{@const amountColor = entry.type === 'income' ? 'text-emerald-700' : entry.type === 'expense' ? 'text-rose-700' : entry.type === 'asset' ? 'text-blue-700' : 'text-purple-700'}
 						<tr class="hover:bg-slate-50">
 							<td class="px-4 py-3 text-slate-600">{entry.postedOn}</td>
-							<td
-								class={`px-4 py-3 font-medium ${entry.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}`}
-								>{entry.type}</td
-							>
+							<td class={`px-4 py-3 font-medium ${typeColor}`}>
+								{entry.type}
+							</td>
 							<td class="px-4 py-3 text-slate-600">{entry.category}</td>
 							<td class="px-4 py-3 text-slate-600">{entry.description}</td>
-							<td
-								class={`px-4 py-3 text-right ${entry.type === 'income' ? 'text-emerald-700' : 'text-rose-700'}`}
-								>{formatCurrency(entry.amount)}</td
-							>
+							<td class={`px-4 py-3 text-right ${amountColor}`}>
+								{formatCurrency(entry.amount)}
+							</td>
 							<td class="px-4 py-3 text-right">
 								<button
 									class="rounded border border-slate-300 px-3 py-1 text-xs text-slate-500 transition hover:bg-rose-50 hover:text-rose-600"

@@ -5,11 +5,21 @@
 		syncing: boolean;
 		onSync: () => void;
 		onExport: () => void;
+		onExportJson: () => void;
+		onImportJson: () => void;
 		onSearchInput: (value: string) => void;
 		onTypeFilterChange: (value: 'all' | TransactionType) => void;
 	};
 
-	let { syncing, onSync, onExport, onSearchInput, onTypeFilterChange }: Props = $props();
+	let {
+		syncing,
+		onSync,
+		onExport,
+		onExportJson,
+		onImportJson,
+		onSearchInput,
+		onTypeFilterChange
+	}: Props = $props();
 </script>
 
 <div
@@ -29,14 +39,28 @@
 			<option value="all">All types</option>
 			<option value="income">Income</option>
 			<option value="expense">Expense</option>
+			<option value="asset">Asset</option>
+			<option value="liability">Liability</option>
 		</select>
 	</div>
-	<div class="flex items-center gap-2">
+	<div class="flex flex-wrap items-center gap-2">
 		<button
-			class="inline-flex items-center gap-2 rounded-lg border border-primary px-3 py-2 text-primary transition hover:bg-primary/10"
+			class="inline-flex items-center gap-2 rounded-lg border border-slate-300 px-3 py-2 text-slate-700 transition hover:bg-slate-50"
 			onclick={onExport}
 		>
-			<span>Export CSV</span>
+			<span>CSV</span>
+		</button>
+		<button
+			class="inline-flex items-center gap-2 rounded-lg border border-slate-300 px-3 py-2 text-slate-700 transition hover:bg-slate-50"
+			onclick={onExportJson}
+		>
+			<span>Export JSON</span>
+		</button>
+		<button
+			class="inline-flex items-center gap-2 rounded-lg border border-slate-300 px-3 py-2 text-slate-700 transition hover:bg-slate-50"
+			onclick={onImportJson}
+		>
+			<span>Import JSON</span>
 		</button>
 		<button
 			class="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 font-semibold text-white transition hover:bg-primary-dark disabled:opacity-60"

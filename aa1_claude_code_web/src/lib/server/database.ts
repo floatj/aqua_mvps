@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS transactions (
 	category TEXT NOT NULL,
 	description TEXT NOT NULL,
 	amount REAL NOT NULL,
-	type TEXT CHECK(type IN ('income','expense')) NOT NULL,
+	type TEXT CHECK(type IN ('income','expense','asset','liability')) NOT NULL,
 	created_at TEXT NOT NULL,
 	updated_at TEXT NOT NULL
 );

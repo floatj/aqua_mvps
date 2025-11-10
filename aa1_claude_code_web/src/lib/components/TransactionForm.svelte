@@ -40,6 +40,8 @@
 			>
 				<option value="income">Income</option>
 				<option value="expense">Expense</option>
+				<option value="asset">Asset</option>
+				<option value="liability">Liability</option>
 			</select>
 		</label>
 		<label class="flex flex-col gap-1">
