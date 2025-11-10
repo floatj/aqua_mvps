@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light dark;
+  background-color: #0f172a;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, sans-serif;
+  background-color: #f8fafc;
+  color: #0f172a;
+  min-height: 100vh;
+}
+
+main {
+  min-height: 100vh;
+}
